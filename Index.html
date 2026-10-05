@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orientačný test sluchu</title>
+</head>
+<body>
+
+<!-- ============================================================
+     ORIENTAČNÝ TEST SLUCHU – vložiteľný widget
+     Vložte celý blok od <div id="sso-hq"> po koncový </script>
+     do stránky (napr. WordPress blok „Vlastné HTML“).
+     Nastavenia nájdete v objekte SSO_HQ_CONFIG nižšie.
+     ============================================================ -->
+
+<div id="sso-hq" aria-live="polite"></div>
+
+<style>
+#sso-hq{
+  --ink:#16323d; --ink-soft:#4b6470; --sea:#1f6f78; --sea-dark:#15545b;
+  --mist:#eef4f5; --line:#cfdde0; --paper:#ffffff;
+  --ok:#2e7d4f; --mid:#b7791f; --high:#b23a3a;
+  font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:var(--ink); background:var(--mist);
+  max-width:720px; margin:0 auto; padding:clamp(20px,4vw,40px);
+  border-radius:14px; box-sizing:border-box; font-size:19px; line-height:1.55;
+}
+#sso-hq *{box-sizing:border-box}
+#sso-hq h2{font-size:1.65em; line-height:1.2; margin:0 0 .5em; font-weight:700; letter-spacing:-.01em}
+#sso-hq h3{font-size:1.15em; margin:1.4em 0 .4em}
+#sso-hq p{margin:0 0 .9em; max-width:62ch}
+#sso-hq .hq-note{background:var(--paper); border-left:4px solid var(--sea); padding:14px 18px; border-radius:6px; font-size:.9em; color:var(--ink-soft)}
+#sso-hq .hq-alert{background:#fff4f2; border-left:4px solid var(--high); padding:14px 18px; border-radius:6px; font-size:.9em; margin-top:1em}
+#sso-hq .hq-btn{font:inherit; font-weight:600; cursor:pointer; border:2px solid var(--sea); background:var(--sea); color:#fff; padding:14px 26px; border-radius:10px; min-height:52px}
+#sso-hq .hq-btn:hover{background:var(--sea-dark); border-color:var(--sea-dark)}
+#sso-hq .hq-btn.ghost{background:transparent; color:var(--sea)}
+#sso-hq .hq-btn.ghost:hover{background:var(--paper)}
+#sso-hq button:focus-visible,#sso-hq a:focus-visible{outline:3px solid #f0b429; outline-offset:3px}
+#sso-hq .hq-actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:1.4em}
+
+/* progress */
+#sso-hq .hq-progress{display:flex; justify-content:space-between; align-items:center; font-size:.85em; color:var(--ink-soft); margin-bottom:10px}
+#sso-hq .hq-track{height:8px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:28px}
+#sso-hq .hq-fill{height:100%; background:var(--sea); transition:width .3s ease}
+#sso-hq .hq-topic{font-size:.85em; color:var(--sea); font-weight:600; margin-bottom:6px}
+#sso-hq .hq-q{font-size:1.35em; font-weight:600; line-height:1.35; margin:0 0 22px}
+
+/* answer scale – the signature element: bars grow like a volume meter */
+#sso-hq .hq-options{display:grid; gap:12px}
+#sso-hq .hq-opt{display:flex; align-items:center; gap:16px; width:100%; text-align:left; font:inherit; font-size:1.05em;
+  background:var(--paper); color:var(--ink); border:2px solid var(--line); border-radius:12px; padding:16px 18px; cursor:pointer; min-height:64px}
+#sso-hq .hq-opt:hover{border-color:var(--sea)}
+#sso-hq .hq-opt[aria-pressed="true"]{border-color:var(--sea); background:#e3f0f1}
+#sso-hq .hq-bars{display:flex; align-items:flex-end; gap:3px; height:26px; flex:0 0 auto}
+#sso-hq .hq-bars i{display:block; width:6px; border-radius:2px; background:var(--line)}
+#sso-hq .hq-bars i:nth-child(1){height:7px}
+#sso-hq .hq-bars i:nth-child(2){height:13px}
+#sso-hq .hq-bars i:nth-child(3){height:19px}
+#sso-hq .hq-bars i:nth-child(4){height:26px}
+#sso-hq .hq-bars i.on{background:var(--sea)}
+#sso-hq .hq-back{margin-top:22px; background:none; border:none; color:var(--sea); font:inherit; font-size:.95em; cursor:pointer; padding:8px 0; text-decoration:underline}
+
+/* result */
+#sso-hq .hq-score{display:flex; align-items:baseline; gap:10px; margin:6px 0 4px}
+#sso-hq .hq-score b{font-size:2.6em; line-height:1}
+#sso-hq .hq-meter{position:relative; display:grid; grid-template-columns:9fr 9fr 19fr; height:14px; border-radius:7px; overflow:hidden; margin:14px 0 6px}
+#sso-hq .hq-meter span:nth-child(1){background:#cfe7d8}
+#sso-hq .hq-meter span:nth-child(2){background:#f3e1bd}
+#sso-hq .hq-meter span:nth-child(3){background:#efc9c9}
+#sso-hq .hq-pin{position:absolute; top:-4px; width:4px; height:22px; background:var(--ink); border-radius:2px; transform:translateX(-50%)}
+#sso-hq .hq-scale{display:grid; grid-template-columns:9fr 9fr 19fr; font-size:.75em; color:var(--ink-soft); margin-bottom:18px}
+#sso-hq .hq-tier{display:inline-block; font-weight:700; padding:4px 12px; border-radius:20px; color:#fff; font-size:.9em}
+#sso-hq .hq-card{background:var(--paper); border-radius:12px; padding:22px 24px; margin-top:18px}
+#sso-hq ol,#sso-hq ul{margin:0; padding-left:1.3em}
+#sso-hq li{margin-bottom:.55em; max-width:62ch}
+#sso-hq .hq-small{font-size:.82em; color:var(--ink-soft)}
+
+@media (max-width:480px){ #sso-hq{font-size:17px; border-radius:0} #sso-hq .hq-q{font-size:1.2em} }
+@media (prefers-reduced-motion:reduce){ #sso-hq .hq-fill{transition:none} }
+@media print{
+  #sso-hq{background:#fff; max-width:none}
+  #sso-hq .hq-actions,#sso-hq .hq-back{display:none}
+}
+</style>
+
+<script>
+/* ---------------- NASTAVENIA ---------------- */
+var SSO_HQ_CONFIG = {
+  // Odkaz na stránku s kontaktom / objednaním (prázdne = tlačidlo sa nezobrazí)
+  contactUrl: "https://foniatria.eu/kontakt",
+  contactLabel: "Objednať sa na vyšetrenie sluchu",
+  // Hranice skóre (vrátane): nízka 0–lowMax, stredná do midMax, vysoká nad midMax
+  lowMax: 8,
+  midMax: 17
+};
+
+(function(){
+  var C = SSO_HQ_CONFIG;
+  var root = document.getElementById("sso-hq");
+
+  var ANSWERS = [
+    {label:"Nikdy", pts:0},
+    {label:"Niekedy", pts:1},
+    {label:"Často", pts:2},
+    {label:"Takmer vždy", pts:3}
+  ];
+
+  var QUESTIONS = [
+    {topic:"Rozumenie reči v hluku", d:"speech",
+     q:"Máte ťažkosti rozumieť, čo ľudia hovoria, keď je okolo hluk – napríklad v reštaurácii, na oslave alebo v obchode?"},
+    {topic:"Rozumenie reči", d:"speech",
+     q:"Stáva sa vám, že musíte ľudí žiadať, aby zopakovali, čo povedali?"},
+    {topic:"Rozumenie reči", d:"speech",
+     q:"Máte pocit, že ľudia okolo vás mrmlú alebo hovoria nezreteľne?"},
+    {topic:"Rozumenie reči", d:"speech",
+     q:"Horšie rozumiete ženským alebo detským hlasom než mužským?"},
+    {topic:"Rozhovor vo viacerých", d:"speech",
+     q:"Je pre vás ťažké sledovať rozhovor, keď hovorí naraz viac ľudí – napríklad pri rodinnom stole?"},
+    {topic:"Televízor a rádio", d:"volume",
+     q:"Upozorňujú vás blízki, že máte televízor alebo rádio pustené príliš nahlas?"},
+    {topic:"Telefón", d:"volume",
+     q:"Máte ťažkosti rozumieť hovoriacemu pri telefonovaní?"},
+    {topic:"Zvuky v domácnosti", d:"volume",
+     q:"Stáva sa, že nepočujete zvonček pri dverách, zvonenie telefónu alebo pípanie spotrebičov?"},
+    {topic:"Smerové počutie", d:"direction",
+     q:"Je pre vás ťažké určiť, odkiaľ zvuk prichádza – napríklad kto na vás volá alebo z ktorej strany ide auto?"},
+    {topic:"Spoločenský život", d:"social",
+     q:"Vyhýbate sa stretnutiam, návštevám alebo podujatiam, pretože je pre vás namáhavé počuť ostatných?"},
+    {topic:"Únava a frustrácia", d:"social",
+     q:"Cítite sa po rozhovoroch unavene, podráždene alebo frustrovane, pretože ste sa museli veľmi sústrediť na počúvanie?"},
+    {topic:"Tinitus (ušný šelest)", d:"tinnitus",
+     q:"Počujete v ušiach alebo v hlave pískanie, šumenie, hučanie či iný zvuk, ktorý nemá vonkajší zdroj?"}
+  ];
+
+  var DOMAINS = {
+    speech:"rozumenie reči, najmä v hluku a v skupine",
+    volume:"počutie televízora, telefónu a zvukov v domácnosti",
+    direction:"určovanie smeru zvuku",
+    social:"vplyv sluchu na spoločenský život a únavu",
+    tinnitus:"ušný šelest (tinitus)"
+  };
+
+  var answers = new Array(QUESTIONS.length).fill(null);
+  var idx = 0;
+
+  function el(html){ root.innerHTML = html; var h = root.querySelector("h2,.hq-q"); if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:false}); } }
+
+  function bars(n){ var s=""; for(var i=0;i<4;i++){ s+='<i class="'+(i<=n?"on":"")+'"></i>'; } return '<span class="hq-bars" aria-hidden="true">'+s+'</span>'; }
+
+  /* ---------- ÚVOD ---------- */
+  function intro(){
+    el(
+      '<h2>Ako dobre počujete?</h2>'+
+      '<p>Tento krátky test vám pomôže zorientovať sa, či by vám prospelo odborné vyšetrenie sluchu. Odpovedzte na 12 otázok o bežných situáciách z posledných mesiacov – zaberie to asi 3 minúty.</p>'+
+      '<p>Ak test vypĺňate za blízku osobu, odpovedajte tak, ako jej sluch vnímate vy.</p>'+
+      '<div class="hq-note"><strong>Dôležité:</strong> Test je iba orientačný a nenahrádza odborné vyšetrenie sluchu (audiometriu) u lekára ORL, foniatra alebo audiológa. Výsledok nie je diagnóza.</div>'+
+      '<div class="hq-alert"><strong>Náhle zhoršenie sluchu</strong> na jednom alebo oboch ušiach (v priebehu hodín či dní) nečakajte na výsledok testu – ide o stav, ktorý treba čo najskôr, ideálne do 24–48 hodín, riešiť u lekára ORL alebo na pohotovosti.</div>'+
+      '<div class="hq-actions"><button class="hq-btn" id="hq-start">Začať test</button></div>'
+    );
+    document.getElementById("hq-start").onclick = function(){ idx=0; question(); };
+  }
+
+  /* ---------- OTÁZKA ---------- */
+  function question(){
+    var Q = QUESTIONS[idx], pct = Math.round(idx/QUESTIONS.length*100);
+    var opts = ANSWERS.map(function(a,i){
+      return '<button class="hq-opt" data-i="'+i+'" aria-pressed="'+(answers[idx]===i)+'">'+bars(i)+'<span>'+a.label+'</span></button>';
+    }).join("");
+    el(
+      '<div class="hq-progress"><span>Otázka '+(idx+1)+' z '+QUESTIONS.length+'</span></div>'+
+      '<div class="hq-track" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><div class="hq-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="hq-topic">'+Q.topic+'</div>'+
+      '<p class="hq-q">'+Q.q+'</p>'+
+      '<div class="hq-options" role="group" aria-label="Možnosti odpovede">'+opts+'</div>'+
+      (idx>0 ? '<button class="hq-back" id="hq-back">Späť na predchádzajúcu otázku</button>' : '<button class="hq-back" id="hq-back">Späť na úvod</button>')
+    );
+    root.querySelectorAll(".hq-opt").forEach(function(b){
+      b.onclick = function(){
+        answers[idx] = +b.getAttribute("data-i");
+        if(idx < QUESTIONS.length-1){ idx++; question(); } else { result(); }
+      };
+    });
+    document.getElementById("hq-back").onclick = function(){ if(idx>0){ idx--; question(); } else { intro(); } };
+  }
+
+  /* ---------- VÝSLEDOK ---------- */
+  var TIERS = {
+    low:{
+      name:"Nízka pravdepodobnosť ťažkostí so sluchom", color:"var(--ok)",
+      text:"Vaše odpovede nenaznačujú výraznejšie problémy so sluchom. To je dobrá správa. Sluch sa však môže meniť postupne a nenápadne, preto sa oplatí o neho starať aj naďalej.",
+      steps:[
+        "Chráňte si sluch pred hlukom – pri hlučnej práci, koncertoch či kosení používajte chrániče alebo štuple do uší.",
+        "Ak máte viac ako 50 rokov, odporúčame preventívne vyšetrenie sluchu raz za 1–2 roky. Prvé audiometrické vyšetrenie poslúži ako porovnávací základ do budúcnosti.",
+        "Test môžete kedykoľvek zopakovať, napríklad o rok, alebo ak si všimnete zmenu."
+      ]
+    },
+    mid:{
+      name:"Stredná pravdepodobnosť ťažkostí so sluchom", color:"var(--mid)",
+      text:"Vaše odpovede ukazujú, že v niektorých situáciách vám počúvanie robí ťažkosti. Môže to mať rôzne príčiny – od ušného mazu až po začínajúcu nedoslýchavosť. Dobrá správa je, že väčšinu príčin vie lekár rýchlo zistiť a mnohé sa dajú dobre riešiť.",
+      steps:[
+        "Objednajte sa na vyšetrenie sluchu k lekárovi ORL, foniatrovi alebo audiológovi v najbližších týždňoch.",
+        "Súčasťou vyšetrenia je obvykle prehliadka uší a audiometria (audiogram). Je bezbolestná, trvá približne 20–30 minút a presne ukáže, ako počujete.",
+        "Na vyšetrenie si zapíšte, v ktorých situáciách máte najväčšie ťažkosti – pomôžu vám odpovede z tohto testu.",
+        "Ak je to možné, vezmite so sebou blízku osobu. Často si zmeny sluchu všimne skôr ako vy."
+      ]
+    },
+    high:{
+      name:"Vysoká pravdepodobnosť ťažkostí so sluchom", color:"var(--high)",
+      text:"Vaše odpovede naznačujú, že sluch vás v bežnom živote výraznejšie obmedzuje. Nie ste v tom sami – ťažkosti so sluchom patria medzi najčastejšie zdravotné problémy dospelých. Čím skôr ich začnete riešiť, tým lepšie výsledky možno dosiahnuť.",
+      steps:[
+        "Objednajte sa čo najskôr na vyšetrenie k lekárovi ORL, foniatrovi alebo audiológovi.",
+        "Lekár vám urobí audiometrické vyšetrenie (audiogram), podľa potreby aj ďalšie testy, a zistí príčinu a mieru poruchy sluchu.",
+        "Ak sa potvrdí nedoslýchavosť, existujú účinné riešenia. Moderné načúvacie prístroje sú malé, diskrétne a dajú sa prispôsobiť vašim potrebám.",
+        "Včasné riešenie sluchu pomáha udržať kontakt s blízkymi, uľahčuje komunikáciu a podľa výskumov môže prispieť aj k zdraviu mozgu.",
+        "Pokým budete čakať na vyšetrenie: požiadajte ostatných, aby hovorili pomalšie a otočení k vám, a pri rozhovore vypnite rušivé zvuky (TV, rádio)."
+      ]
+    }
+  };
+
+  function result(){
+    var total = 0, dom = {};
+    answers.forEach(function(a,i){
+      var p = ANSWERS[a].pts; total += p;
+      if(p>=2){ dom[QUESTIONS[i].d] = true; }
+    });
+    var max = QUESTIONS.length*3;
+    var key = total<=C.lowMax ? "low" : (total<=C.midMax ? "mid" : "high");
+    var T = TIERS[key];
+    var tinn = ANSWERS[answers[QUESTIONS.length-1]].pts;
+    var pinPos = (total/max*100).toFixed(1);
+
+    var domList = Object.keys(dom).map(function(k){ return '<li>'+DOMAINS[k]+'</li>'; }).join("");
+    var domBlock = domList ? '<h3>Oblasti, kde ste uviedli najviac ťažkostí</h3><ul>'+domList+'</ul>' : "";
+
+    var tinnBlock = "";
+    if(tinn>=2){
+      tinnBlock = '<div class="hq-card"><h3 style="margin-top:0">K ušnému šelestu</h3>'+
+        '<p>Uviedli ste, že ušný šelest (tinitus) pociťujete často. Tinitus je častý a väčšinou nie je nebezpečný, no býva spojený so zmenami sluchu. '+
+        (key==="low" ? 'Aj keď je celkové skóre nízke, odporúčame dať si ho skontrolovať u lekára ORL alebo foniatra.' : 'Spomeňte ho pri vyšetrení – existujú spôsoby, ako ho zmierniť.')+'</p>'+
+        '<p class="hq-small">Ak šelest pulzuje v rytme srdca, je len na jednom uchu alebo vznikol náhle, vyhľadajte lekára bez zbytočného odkladu.</p></div>';
+    }
+
+    var cta = C.contactUrl ? '<a class="hq-btn" href="'+C.contactUrl+'" style="text-decoration:none;display:inline-flex;align-items:center">'+C.contactLabel+'</a>' : "";
+
+    el(
+      '<h2>Váš výsledok</h2>'+
+      '<div class="hq-score"><b>'+total+'</b><span>z '+max+' bodov</span></div>'+
+      '<span class="hq-tier" style="background:'+T.color+'">'+T.name+'</span>'+
+      '<div class="hq-meter" aria-hidden="true"><span></span><span></span><span></span><div class="hq-pin" style="left:'+pinPos+'%"></div></div>'+
+      '<div class="hq-scale" aria-hidden="true"><span>nízka 0–'+C.lowMax+'</span><span>stredná '+(C.lowMax+1)+'–'+C.midMax+'</span><span>vysoká '+(C.midMax+1)+'–'+max+'</span></div>'+
+      '<p>'+T.text+'</p>'+
+      '<div class="hq-card"><h3 style="margin-top:0">Odporúčané ďalšie kroky</h3><ol>'+T.steps.map(function(s){return '<li>'+s+'</li>';}).join("")+'</ol>'+domBlock+'</div>'+
+      tinnBlock+
+      '<div class="hq-alert"><strong>Kedy nečakať:</strong> pri náhlom zhoršení sluchu, náhle vzniknutom šeleste na jednom uchu, závratoch, bolesti ucha alebo výtoku z ucha vyhľadajte lekára ORL čo najskôr, ideálne do 24–48 hodín.</div>'+
+      '<p class="hq-small" style="margin-top:1.2em">Tento výsledok je orientačný a nenahrádza odborné vyšetrenie sluchu. Presný stav sluchu určí iba audiometrické vyšetrenie u lekára.</p>'+
+      '<div class="hq-actions">'+cta+
+        '<button class="hq-btn ghost" id="hq-print">Vytlačiť výsledok</button>'+
+        '<button class="hq-btn ghost" id="hq-again">Urobiť test znova</button></div>'
+    );
+    document.getElementById("hq-print").onclick = function(){ window.print(); };
+    document.getElementById("hq-again").onclick = function(){ answers.fill(null); intro(); };
+  }
+
+  intro();
+})();
+</script>
+
+</body>
+</html>
